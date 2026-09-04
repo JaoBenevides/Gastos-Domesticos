@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Controle seus gastos domésticos e acompanhe seu orçamento mensal.">
+		<title>Gestão de Gastos Domésticos</title>
+	</head>
+	<body>
+		<header class="hero-gastos">
+			<div class="container">
+				<h1 class="h2 mb-0">Gestão de Gastos</h1>
+			</div>
+		</header>
+
+		<main class="container py-4">
+			<section id="resumo" aria-labelledby="titulo-resumo">
+				<div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+					<h2 id="titulo-resumo" class="h4 mb-0">Resumo</h2>
+					<button id="btn-limpar-tudo" class="btn btn-outline-danger" type="button">Limpar lançamentos</button>
+				</div>
+
+				<div class="row g-3 mb-4">
+					<div class="col-12 col-sm-6 col-lg-3">
+						<div class="card card-resumo h-100 shadow-sm border-0">
+							<div class="card-body"><p class="text-muted mb-1">Total gasto</p><strong id="resumo-total" class="h4">R$ 0,00</strong></div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-lg-3">
+						<div class="card card-resumo h-100 shadow-sm border-0">
+							<div class="card-body"><p class="text-muted mb-1">Orçamento mensal</p><strong id="resumo-orcamento" class="h4">R$ 0,00</strong></div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-lg-3">
+						<div class="card card-resumo h-100 shadow-sm border-0">
+							<div class="card-body"><p class="text-muted mb-1">Saldo disponível</p><strong id="resumo-saldo" class="h4">R$ 0,00</strong></div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-6 col-lg-3">
+						<div class="card card-resumo h-100 shadow-sm border-0">
+							<div class="card-body"><p class="text-muted mb-1">Lançamentos</p><strong id="resumo-qtd" class="h4">0</strong></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card border-0 shadow-sm mb-4">
+					<div class="card-body">
+						<div class="d-flex justify-content-between mb-2"><span>Uso do orçamento</span><strong id="resumo-percentual">0%</strong></div>
+						<div class="progress" role="progressbar" aria-label="Uso do orçamento" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+							<div id="barra-orcamento-geral" class="progress-bar bg-success" style="width: 0%"></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section aria-labelledby="titulo-categorias" class="mb-4">
+				<h2 id="titulo-categorias" class="h4 mb-3">Categorias</h2>
+				<div id="grade-categorias" class="row g-3"></div>
+				<p id="mensagem-categorias-vazia" class="text-muted mb-0">Nenhum gasto por categoria.</p>
+			</section>
+
+			<section id="lancamentos" aria-labelledby="titulo-lancamentos">
+				<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+					  <h2 id="titulo-lancamentos" class="h4 mb-0">Lançamentos</h2>
+					<button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalGasto">Adicionar gasto</button>
+				</div>
+
+				<div class="card border-0 shadow-sm">
+					<div class="card-body">
+						<div class="row g-2 align-items-end mb-3">
+							<div class="col-12 col-md-5 col-lg-4">
+								<label class="form-label" for="filtro-categoria">Filtrar por categoria</label>
+								<select id="filtro-categoria" class="form-select">
+									<option value="todas">Todas as categorias</option>
+								</select>
+							</div>
+							<div class="col-auto">
+								<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#modalOrcamento">Orçamento</button>
+							</div>
+						</div>
+
+						<div class="table-responsive">
+							<table class="table align-middle mb-0">
+								<caption class="visually-hidden">Lista de gastos cadastrados</caption>
+								<thead><tr><th scope="col">Data</th><th scope="col">Descrição</th><th scope="col">Categoria</th><th scope="col" class="text-end">Valor</th><th scope="col" class="text-center">Ação</th></tr></thead>
+								<tbody id="corpo-tabela-gastos"></tbody>
+							</table>
+						</div>
+						<p id="mensagem-vazia" class="text-muted text-center my-4">Nenhum lançamento encontrado.</p>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<div class="modal fade" id="modalGasto" tabindex="-1" aria-labelledby="titulo-modal-gasto" aria-hidden="true">
+			<div class="modal-dialog"><div class="modal-content">
+				<div class="modal-header"><h2 id="titulo-modal-gasto" class="modal-title h5">Adicionar gasto</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
+				<form id="form-gasto">
+					<div class="modal-body">
+						<div class="mb-3"><label class="form-label" for="campo-descricao">Descrição</label><input id="campo-descricao" class="form-control" type="text" required></div>
+						<div class="row g-3"><div class="col-sm-6"><label class="form-label" for="campo-valor">Valor</label><input id="campo-valor" class="form-control" type="number" min="0.01" step="0.01" required></div><div class="col-sm-6"><label class="form-label" for="campo-data">Data</label><input id="campo-data" class="form-control" type="date" required></div></div>
+						<div class="mt-3"><label class="form-label" for="campo-categoria">Categoria</label><select id="campo-categoria" class="form-select" required><option value="">Selecione uma categoria</option></select></div>
+					</div>
+					<div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" type="submit">Salvar gasto</button></div>
+				</form>
+			</div></div>
+		</div>
+
+		<div class="modal fade" id="modalOrcamento" tabindex="-1" aria-labelledby="titulo-modal-orcamento" aria-hidden="true">
+			<div class="modal-dialog"><div class="modal-content">
+				<div class="modal-header"><h2 id="titulo-modal-orcamento" class="modal-title h5">Orçamento mensal</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
+				<form id="form-orcamento"><div class="modal-body"><label class="form-label" for="campo-orcamento">Valor disponível no mês</label><input id="campo-orcamento" class="form-control" type="number" min="0" step="0.01" placeholder="0,00"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" type="submit">Salvar orçamento</button></div></form>
+			</div></div>
+		</div>
+
+		<script type="module" src="/src/js/script.js"></script>
+	</body>
+</html>
