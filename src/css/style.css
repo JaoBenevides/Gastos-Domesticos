@@ -1,0 +1,96 @@
+/* ==========================================================================
+   style.css — Gestão de Gastos Domésticos
+   CSS próprio do projeto. Complementa (não substitui) o Bootstrap importado
+   via npm em src/js/script.js.
+   ========================================================================== */
+ 
+:root {
+  --cor-primaria: #2a9d8f;
+  --cor-fundo-hero: #073b4c;
+}
+ 
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background-color: #f4f6f8;
+}
+ 
+/* Hero / cabeçalho */
+.hero-gastos {
+  background: linear-gradient(135deg, var(--cor-fundo-hero) 0%, #118ab2 100%);
+  color: #fff;
+  padding: 2.75rem 0;
+}
+ 
+.hero-gastos .subtitulo {
+  color: #d8f3f0;
+  max-width: 640px;
+}
+ 
+/* Navbar */
+.navbar-brand {
+  letter-spacing: 0.3px;
+}
+ 
+/* Cards de resumo do dashboard */
+.card-resumo {
+  border-radius: 0.75rem;
+  border-left: 4px solid var(--cor-primaria);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+ 
+.card-resumo:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.75rem 1.25rem rgba(0, 0, 0, 0.1) !important;
+}
+ 
+/* Cartões de categoria */
+.card-categoria {
+  border-radius: 0.6rem;
+}
+ 
+.card-categoria .progress {
+  border-radius: 999px;
+}
+ 
+/* Tabela de lançamentos */
+#corpo-tabela-gastos tr {
+  animation: entrada 0.2s ease-out;
+}
+ 
+@keyframes entrada {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+ 
+.valor-negativo {
+  color: #d90429;
+  font-weight: 600;
+}
+ 
+/* Rodapé */
+footer {
+  background-color: var(--cor-fundo-hero);
+  color: #d8f3f0;
+}
+ 
+footer a {
+  color: #90e0ef;
+  text-decoration: none;
+}
+ 
+footer a:hover {
+  text-decoration: underline;
+}
+ 
+/* Ajuste fino de responsividade para telas muito pequenas */
+@media (max-width: 380px) {
+  .hero-gastos h1 {
+    font-size: 1.5rem;
+  }
+}
