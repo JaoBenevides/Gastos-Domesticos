@@ -1,14 +1,3 @@
-// ==========================================================================
-// script.js — Gestão de Gastos Domésticos
-// Importa o Bootstrap via pacote npm (nada de CDN) e o CSS próprio do projeto
-// ==========================================================================
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import '../css/style.css';
-
-// --------------------------------------------------------------------------
-// Configuração de categorias (nome, cor do Bootstrap usada nos badges/barras)
-// --------------------------------------------------------------------------
 const CATEGORIAS = [
   { id: "moradia", nome: "Moradia", icone: "🏠", cor: "primary" },
   { id: "alimentacao", nome: "Alimentação", icone: "🍽️", cor: "warning" },
@@ -22,9 +11,6 @@ const CATEGORIAS = [
 const CHAVE_GASTOS = "gestao-gastos:lancamentos";
 const CHAVE_ORCAMENTO = "gestao-gastos:orcamento";
 
-// --------------------------------------------------------------------------
-// Estado (persistido em localStorage — o app funciona sem back-end)
-// --------------------------------------------------------------------------
 let gastos = carregarGastos();
 let orcamentoMensal = carregarOrcamento();
 
@@ -50,9 +36,6 @@ function salvarOrcamento() {
   localStorage.setItem(CHAVE_ORCAMENTO, String(orcamentoMensal));
 }
 
-// --------------------------------------------------------------------------
-// Utilidades
-// --------------------------------------------------------------------------
 function formatarMoeda(valor) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
@@ -70,9 +53,6 @@ function gerarId() {
   return `g_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 }
 
-// --------------------------------------------------------------------------
-// Elementos do DOM
-// --------------------------------------------------------------------------
 const elResumoTotal = document.getElementById("resumo-total");
 const elResumoOrcamento = document.getElementById("resumo-orcamento");
 const elResumoSaldo = document.getElementById("resumo-saldo");
@@ -80,6 +60,7 @@ const elResumoQtd = document.getElementById("resumo-qtd");
 const elResumoPercentual = document.getElementById("resumo-percentual");
 const elBarraGeral = document.getElementById("barra-orcamento-geral");
 const elGradeCategorias = document.getElementById("grade-categorias");
+const elMensagemCategoriasVazia = document.getElementById("mensagem-categorias-vazia");
 const elCorpoTabela = document.getElementById("corpo-tabela-gastos");
 const elMensagemVazia = document.getElementById("mensagem-vazia");
 const elFiltroCategoria = document.getElementById("filtro-categoria");
@@ -89,9 +70,6 @@ const elFormOrcamento = document.getElementById("form-orcamento");
 const elCampoOrcamento = document.getElementById("campo-orcamento");
 const elBtnLimparTudo = document.getElementById("btn-limpar-tudo");
 
-// --------------------------------------------------------------------------
-// Popular selects de categoria (formulário e filtro)
-// --------------------------------------------------------------------------
 function popularSelectsCategoria() {
   CATEGORIAS.forEach(cat => {
     const opcaoForm = document.createElement("option");
@@ -106,9 +84,6 @@ function popularSelectsCategoria() {
   });
 }
 
-// --------------------------------------------------------------------------
-// Renderização: resumo geral (cards + barra de progresso)
-// --------------------------------------------------------------------------
 function renderizarResumo() {
   const total = gastos.reduce((soma, g) => soma + g.valor, 0);
   const saldo = orcamentoMensal - total;
@@ -135,19 +110,21 @@ function renderizarResumo() {
   }
 }
 
-// --------------------------------------------------------------------------
-// Renderização: gastos agrupados por categoria (grid de cards)
-// --------------------------------------------------------------------------
 function renderizarCategorias() {
   const totalGeral = gastos.reduce((soma, g) => soma + g.valor, 0);
 
   elGradeCategorias.innerHTML = "";
-  CATEGORIAS.forEach(cat => {
+
+  const categoriasComGasto = CATEGORIAS.filter(cat =>
+    gastos.some(g => g.categoria === cat.id)
+  );
+
+  elMensagemCategoriasVazia.classList.toggle("d-none", categoriasComGasto.length > 0);
+
+  categoriasComGasto.forEach(cat => {
     const totalCategoria = gastos
       .filter(g => g.categoria === cat.id)
       .reduce((soma, g) => soma + g.valor, 0);
-
-    if (totalCategoria === 0) return;
 
     const percentualDoTotal = totalGeral > 0 ? (totalCategoria / totalGeral) * 100 : 0;
 
@@ -171,9 +148,6 @@ function renderizarCategorias() {
   });
 }
 
-// --------------------------------------------------------------------------
-// Renderização: tabela de lançamentos
-// --------------------------------------------------------------------------
 function renderizarTabela() {
   const filtro = elFiltroCategoria.value;
   const listaFiltrada = filtro === "todas"
@@ -202,15 +176,11 @@ function renderizarTabela() {
     elCorpoTabela.appendChild(linha);
   });
 
-  // Liga os botões de remover recém-criados
   elCorpoTabela.querySelectorAll(".btn-remover").forEach(botao => {
     botao.addEventListener("click", () => removerGasto(botao.dataset.id));
   });
 }
 
-// --------------------------------------------------------------------------
-// Ações
-// --------------------------------------------------------------------------
 function renderizarTudo() {
   renderizarResumo();
   renderizarCategorias();
@@ -233,7 +203,11 @@ function adicionarGasto(evento) {
   salvarGastos();
   renderizarTudo();
   elFormGasto.reset();
-  document.getElementById("campo-descricao").focus();
+
+  const modalEl = document.getElementById("modalGasto");
+  bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+
+  document.getElementById("campo-data").value = new Date().toISOString().slice(0, 10);
 }
 
 function removerGasto(id) {
@@ -260,17 +234,12 @@ function salvarOrcamentoForm(evento) {
     renderizarResumo();
   }
   const modalEl = document.getElementById("modalOrcamento");
-  const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-  modal.hide();
+  bootstrap.Modal.getOrCreateInstance(modalEl).hide();
 }
 
-// --------------------------------------------------------------------------
-// Inicialização
-// --------------------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
   popularSelectsCategoria();
 
-  // Data padrão do formulário = hoje
   document.getElementById("campo-data").value = new Date().toISOString().slice(0, 10);
   elCampoOrcamento.value = orcamentoMensal > 0 ? orcamentoMensal : "";
 
